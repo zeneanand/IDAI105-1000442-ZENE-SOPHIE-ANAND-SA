@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.express as px
-import plotly.graph_objects as go
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 from mlxtend.frequent_patterns import apriori, association_rules
@@ -13,39 +12,18 @@ st.set_page_config(page_title="Black Friday Intelligence", page_icon="🛍️", 
 # --- CUSTOM CSS FOR AESTHETICS ---
 st.markdown("""
     <style>
-    /* Main background */
-    .stApp {
-        background-color: #0E1117;
-        color: #FFFFFF;
-    }
-    /* Metric Card Styling */
-    div[data-testid="stMetricValue"] {
-        font-size: 28px;
-        font-weight: bold;
-        color: #FACC15; /* Gold Accent */
-    }
-    div[data-testid="stMetricLabel"] {
-        color: #94A3B8;
-    }
-    /* Sidebar styling */
-    section[data-testid="stSidebar"] {
-        background-color: #1E293B;
-    }
-    /* Style headers */
-    h1, h2, h3 {
-        color: #F8FAFC;
-        font-family: 'Inter', sans-serif;
-    }
-    /* Custom Card Container */
-    .reportview-container .main .block-container{
-        padding-top: 2rem;
-    }
+    .stApp { background-color: #0E1117; color: #FFFFFF; }
+    div[data-testid="stMetricValue"] { font-size: 28px; font-weight: bold; color: #FACC15; }
+    div[data-testid="stMetricLabel"] { color: #94A3B8; }
+    section[data-testid="stSidebar"] { background-color: #1E293B; }
+    h1, h2, h3 { color: #F8FAFC; font-family: 'Inter', sans-serif; }
+    .reportview-container .main .block-container{ padding-top: 2rem; }
     </style>
     """, unsafe_allow_html=True)
 
-# --- DATA GENERATION (Stage 2: Preprocessing) ---
+# --- DATA GENERATION (Cache-Busted) ---
 @st.cache_data
-def get_clean_data():
+def load_fresh_data_v2():
     np.random.seed(42)
     size = 2000
     df = pd.DataFrame({
@@ -54,8 +32,8 @@ def get_clean_data():
         'Age': np.random.choice(['0-17', '18-25', '26-35', '36-45', '46-55', '55+'], size),
         'City_Category': np.random.choice(['A', 'B', 'C'], size),
         'Product_Category_1': np.random.randint(1, 12, size),
-        # Using absolute value to ensure no negative numbers are generated
-        'Purchase': np.abs(np.random.normal(9500, 3000, size)) 
+        # Safety floor added: absolute value + 100 ensures no zeros or negatives
+        'Purchase': np.abs(np.random.normal(9500, 3000, size)) + 100 
     })
     # Add High-Value Anomalies
     df.loc[np.random.choice(df.index, 25), 'Purchase'] = np.random.uniform(25000, 40000, 25)
@@ -64,7 +42,7 @@ def get_clean_data():
     df['Age_Code'] = df['Age'].astype('category').cat.codes
     return df
 
-df = get_clean_data()
+df = load_fresh_data_v2()
 
 # --- SIDEBAR NAVIGATION ---
 with st.sidebar:
@@ -73,7 +51,6 @@ with st.sidebar:
     page = st.selectbox("Navigation", ["📈 Overview & EDA", "🎯 Customer Segments", "🔗 Market Basket Analysis", "⚠️ Fraud & Anomalies"])
     st.markdown("---")
     st.write("**Model Status:** Optimized")
-    st.write("**Data Refresh:** Mar 2026")
 
 # --- HEADER SECTION ---
 st.title("🛍️ Black Friday Business Intelligence")
@@ -91,7 +68,6 @@ st.divider()
 # --- 1. OVERVIEW & EDA ---
 if page == "📈 Overview & EDA":
     st.subheader("Exploratory Data Insights")
-    
     tab1, tab2 = st.tabs(["Demographics", "Product Trends"])
     
     with tab1:
@@ -102,7 +78,6 @@ if page == "📈 Overview & EDA":
                             color_discrete_sequence=["#3B82F6", "#EC4899"],
                             template="plotly_dark")
             st.plotly_chart(fig_age, use_container_width=True)
-            
         with c2:
             fig_city = px.sunburst(df, path=['City_Category', 'Age'], values='Purchase',
                                   title="Revenue Distribution by City & Age",
@@ -121,7 +96,6 @@ elif page == "🎯 Customer Segments":
     st.subheader("AI-Powered Customer Segmentation")
     st.info("Applying K-Means Clustering to identify distinct spending tiers based on demographic data.")
     
-    # Clustering Logic
     scaler = StandardScaler()
     X = scaler.fit_transform(df[['Age_Code', 'Purchase']])
     
@@ -129,7 +103,7 @@ elif page == "🎯 Customer Segments":
     df['Cluster'] = kmeans.fit_predict(X)
     df['Segment'] = df['Cluster'].map({0: 'Value Hunter', 1: 'Standard Shopper', 2: 'VIP Spender'})
     
-    # FIX: Removed the buggy 'size' parameter entirely for stability
+    # Clean scatter plot with absolutely NO size parameter to cause errors
     fig_cluster = px.scatter(df, x="Age", y="Purchase", color="Segment", 
                             symbol="Segment",
                             title="K-Means Segmentation: High-Value vs Volume Shoppers",
@@ -148,9 +122,7 @@ elif page == "🎯 Customer Segments":
 elif page == "🔗 Market Basket Analysis":
     st.subheader("Association Rules: Product Cross-Selling")
     
-    # Apriori Preprocessing
     basket = df.groupby(['User_ID', 'Product_Category_1'])['Product_Category_1'].count().unstack().fillna(0)
-    # Ensure standard integer format for the apriori algorithm
     basket = basket.map(lambda x: 1 if x > 0 else 0)
     
     frequent_items = apriori(basket, min_support=0.08, use_colnames=True)
@@ -160,12 +132,11 @@ elif page == "🔗 Market Basket Analysis":
         st.write("Identified Product Pairings with High Correlation:")
         st.dataframe(rules[['antecedents', 'consequents', 'support', 'confidence', 'lift']].sort_values('lift', ascending=False).style.background_gradient(cmap='Blues'), use_container_width=True)
     else:
-        st.warning("No strong associations found at this support level. Try increasing your data size.")
+        st.warning("No strong associations found at this support level.")
 
 # --- 4. ANOMALIES ---
 elif page == "⚠️ Fraud & Anomalies":
     st.subheader("Anomaly Detection: Extreme Outliers")
-    st.write("Detecting purchases that fall outside 3 Standard Deviations—useful for fraud detection or identifying Whale Shoppers.")
     
     upper_limit = df['Purchase'].mean() + (3 * df['Purchase'].std())
     df['Is_Anomaly'] = df['Purchase'] > upper_limit
@@ -177,4 +148,4 @@ elif page == "⚠️ Fraud & Anomalies":
     fig_anomaly.add_hline(y=upper_limit, line_dash="dash", line_color="white", annotation_text="Anomaly Threshold")
     st.plotly_chart(fig_anomaly, use_container_width=True)
     
-    st.error(f"Attention: {len(df[df['Is_Anomaly']])} transactions detected as anomalies. Action required for verification.")
+    st.error(f"Attention: {len(df[df['Is_Anomaly']])} transactions detected as anomalies.")
