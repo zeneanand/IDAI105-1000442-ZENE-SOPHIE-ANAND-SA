@@ -54,7 +54,8 @@ def get_clean_data():
         'Age': np.random.choice(['0-17', '18-25', '26-35', '36-45', '46-55', '55+'], size),
         'City_Category': np.random.choice(['A', 'B', 'C'], size),
         'Product_Category_1': np.random.randint(1, 12, size),
-        'Purchase': np.random.normal(9500, 3000, size)
+        # Using absolute value to ensure no negative numbers are generated
+        'Purchase': np.abs(np.random.normal(9500, 3000, size)) 
     })
     # Add High-Value Anomalies
     df.loc[np.random.choice(df.index, 25), 'Purchase'] = np.random.uniform(25000, 40000, 25)
@@ -128,8 +129,9 @@ elif page == "🎯 Customer Segments":
     df['Cluster'] = kmeans.fit_predict(X)
     df['Segment'] = df['Cluster'].map({0: 'Value Hunter', 1: 'Standard Shopper', 2: 'VIP Spender'})
     
+    # FIX: Removed the buggy 'size' parameter entirely for stability
     fig_cluster = px.scatter(df, x="Age", y="Purchase", color="Segment", 
-                            symbol="Segment", size="Purchase",
+                            symbol="Segment",
                             title="K-Means Segmentation: High-Value vs Volume Shoppers",
                             color_discrete_sequence=["#10B981", "#F59E0B", "#EF4444"],
                             template="plotly_dark")
@@ -148,7 +150,8 @@ elif page == "🔗 Market Basket Analysis":
     
     # Apriori Preprocessing
     basket = df.groupby(['User_ID', 'Product_Category_1'])['Product_Category_1'].count().unstack().fillna(0)
-    basket = basket.applymap(lambda x: 1 if x > 0 else 0)
+    # Ensure standard integer format for the apriori algorithm
+    basket = basket.map(lambda x: 1 if x > 0 else 0)
     
     frequent_items = apriori(basket, min_support=0.08, use_colnames=True)
     rules = association_rules(frequent_items, metric="lift", min_threshold=1)
@@ -175,4 +178,3 @@ elif page == "⚠️ Fraud & Anomalies":
     st.plotly_chart(fig_anomaly, use_container_width=True)
     
     st.error(f"Attention: {len(df[df['Is_Anomaly']])} transactions detected as anomalies. Action required for verification.")
-    
