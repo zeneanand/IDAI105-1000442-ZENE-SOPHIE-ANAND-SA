@@ -134,7 +134,6 @@ def load_and_preprocess_data():
     log = []
     
     # STAGE 2 STEPS
-    
     # Check for duplicates
     initial_len = len(df_raw)
     df = df_raw.drop_duplicates()
@@ -161,6 +160,13 @@ def load_and_preprocess_data():
     return df, log
 
 df, prep_log = load_and_preprocess_data()
+
+# Global IQR Calculation (needed for Stage 6 and Stage 7)
+usage = df['Purchase']
+Q1 = usage.quantile(0.25)
+Q3 = usage.quantile(0.75)
+IQR = Q3 - Q1
+upper_bound = Q3 + 1.5 * IQR
 
 # ------------------------------
 # Sidebar Navigation
@@ -302,34 +308,41 @@ elif page == "4️⃣ Stage 4: Clustering Analysis":
     with col1:
         inertias = []
         K_range = range(1, 8)
-        for k in K_range:
-            kmeans = KMeans(n_clusters=k, random_state=42, n_init=10)
-            kmeans.fit(X)
-            inertias.append(kmeans.inertia_)
+        for k_val in K_range:
+            kmeans_temp = KMeans(n_clusters=k_val, random_state=42, n_init=10)
+            kmeans_temp.fit(X)
+            inertias.append(kmeans_temp.inertia_)
         
         fig_elbow = px.line(x=list(K_range), y=inertias, markers=True, title='Elbow Method', template='plotly_dark')
         fig_elbow.add_annotation(x=3, y=inertias[2], text="Elbow Point (k=3)", showarrow=True, arrowhead=1)
         st.plotly_chart(fig_elbow, use_container_width=True)
     with col2:
         st.markdown("<br><br>", unsafe_allow_html=True)
-        show_insight("The Elbow Method graph shows a sharp bend (the 'elbow') at k=3. This indicates that splitting our customers into exactly 3 distinct groups is the most mathematically optimal choice.")
+        show_insight("The Elbow Method graph shows a sharp bend (the 'elbow') at k=3. While 3 is optimal, use the slider below to dynamically test different cluster groupings and see how the algorithm re-segments our buyers!")
 
-    # Apply K-Means
-    kmeans = KMeans(n_clusters=3, random_state=42, n_init=10)
+    st.markdown("### 2. Interactive Clustering & Segmentation")
+    
+    # NEW FEATURE: Dynamic Slider for 'k'
+    user_k = st.slider("⚙️ Select Number of Customer Segments (k):", min_value=2, max_value=6, value=3, step=1)
+    
+    # Apply K-Means dynamically based on slider
+    kmeans = KMeans(n_clusters=user_k, random_state=42, n_init=10)
     df['Cluster'] = kmeans.fit_predict(X)
     
-    # Label Clusters per Rubric
-    cluster_mapping = {0: 'Discount Lovers', 1: 'Average Shoppers', 2: 'Premium Buyers'}
+    # Dynamic Labeling based on average spend
+    cluster_means = df.groupby('Cluster')['Purchase'].mean().sort_values()
+    tier_labels = ["Discount Lovers", "Average Buyers", "Premium Buyers", "Elite VIPs", "Whales", "Ultra Whales"]
+    
+    cluster_mapping = {cluster_id: tier_labels[i] for i, cluster_id in enumerate(cluster_means.index)}
     df['Buyer_Persona'] = df['Cluster'].map(cluster_mapping)
 
-    st.markdown("### 2. Visualizing Clusters with Scatter Plots")
     fig_cluster = px.scatter(df, x='Age', y='Purchase', color='Buyer_Persona',
                              category_orders={"Age": ['0-17', '18-25', '26-35', '36-45', '46-50', '51-55', '55+']},
-                             title='Customer Clusters based on Age and Purchase Habits',
-                             color_discrete_map={'Premium Buyers': '#FFD700', 'Average Shoppers': '#00E5FF', 'Discount Lovers': '#FF3366'}, 
+                             title=f'Customer Clusters (k={user_k}) based on Age and Purchase Habits',
+                             color_discrete_sequence=px.colors.qualitative.Set1, 
                              template='plotly_dark', opacity=0.7)
     st.plotly_chart(fig_cluster, use_container_width=True)
-    show_insight("The scatter plot clearly visualizes our groups. 'Premium Buyers' (Gold) spend heavily and are concentrated in older demographics. 'Discount Lovers' (Red) represent the high-volume, low-spend tier. We can now send targeted discount emails to the Red group and luxury ads to the Gold group.")
+    show_insight(f"By grouping into {user_k} clusters, the K-Means model successfully separated the 'Premium Buyers' (high value, older) from the 'Discount Lovers' (low value, mass market). Retailers can use these distinct profiles for highly targeted email marketing campaigns.")
 
 # ------------------------------
 # Stage 5: Association Rules
@@ -338,10 +351,8 @@ elif page == "5️⃣ Stage 5: Association Rules":
     st.write("Now, let’s find which products are usually bought together. Think of this like observing your friends at lunch—if someone buys pizza, they usually buy Coke too. This helps retailers design better combo offers.")
 
     with st.spinner("Running Apriori Algorithm..."):
-        # Format basket for apriori using our explicit category names
-        df_rules = df[df['Product_Category_2'] != 'None'] # Drop empty second categories
+        df_rules = df[df['Product_Category_2'] != 'None'] 
         
-        # Create a transaction list for each user
         transactions = []
         for _, row in df_rules.iterrows():
             transactions.append([f"Product_Category_1 = {row['Product_Category_1']}", f"Product_Category_2 = {row['Product_Category_2']}"])
@@ -350,17 +361,13 @@ elif page == "5️⃣ Stage 5: Association Rules":
         te_ary = te.fit(transactions).transform(transactions)
         df_trans = pd.DataFrame(te_ary, columns=te.columns_)
 
-        # Apply Apriori
         frequent_itemsets = apriori(df_trans, min_support=0.01, use_colnames=True)
         
         if not frequent_itemsets.empty:
             rules = association_rules(frequent_itemsets, metric="lift", min_threshold=1.0)
-            
-            # Filter to show only rules going from Cat 1 -> Cat 2
             rules = rules[rules['antecedents'].apply(lambda x: 'Product_Category_1' in list(x)[0])]
             rules = rules.sort_values('lift', ascending=False).head(10)
             
-            # Format sets for display
             rules['Rule'] = rules['antecedents'].apply(lambda x: list(x)[0]) + " ➔ " + rules['consequents'].apply(lambda x: list(x)[0])
             
             st.markdown("### Top Generated Rules (Support, Confidence, Lift)")
@@ -384,13 +391,6 @@ elif page == "6️⃣ Stage 6: Anomaly Detection":
     st.write("Not all shopping behaviors are normal; some people spend way more than others. Anomalies are like finding an odd student in class who scores 100 when everyone else scores 60-70. Detecting these unusual spenders is important for insights.")
 
     st.markdown("### Statistical Detection (IQR Method) on the Purchase Column")
-    
-    # Calculate IQR
-    usage = df['Purchase']
-    Q1 = usage.quantile(0.25)
-    Q3 = usage.quantile(0.75)
-    IQR = Q3 - Q1
-    upper_bound = Q3 + 1.5 * IQR
     
     df['Behavior'] = np.where(df['Purchase'] > upper_bound, 'Anomaly (High Spender)', 'Normal')
     anomalies = df[df['Behavior'] == 'Anomaly (High Spender)']
@@ -419,7 +419,7 @@ elif page == "6️⃣ Stage 6: Anomaly Detection":
                          title="Occupation Codes of Anomaly Spenders", template='plotly_dark')
         st.plotly_chart(fig_occ, use_container_width=True)
 
-    show_insight("By comparing anomalies to demographic details, we see that our extremely high spenders belong almost exclusively to the 26-45 Age brackets and specific Occupation codes. These are highly lucrative 'Whales' who should be investigated for VIP loyalty programs.")
+    show_insight("By comparing anomalies to demographic details, we see that our 'Whale' buyers are heavily concentrated in the 26-45 Age brackets and specific Occupation codes. We should route these VIP buyers to a premium customer service tier.")
 
 # ------------------------------
 # Stage 7: Insights & Reporting
@@ -427,13 +427,38 @@ elif page == "7️⃣ Stage 7: Insights & Reporting":
     st.markdown('<div class="main-header">Stage 7: Insights & Reporting</div>', unsafe_allow_html=True)
     st.write("Once analysis is done, we need to summarize findings in a way that’s easy to understand. Insights are like telling the final story after reading the whole book - short, clear, and meaningful.")
 
-    st.markdown("## 🔑 Final Dashboard Reporting")
+    st.markdown("## 📊 Visual Executive Summary")
+    
+    # NEW FEATURE: Graphs added directly to Stage 7
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        # Viz 1: Age Group Spend
+        fig_q1 = px.bar(df.groupby('Age')['Purchase'].mean().reset_index(), x='Age', y='Purchase', 
+                        title="Average Spend by Age Group", color='Purchase', template='plotly_dark')
+        st.plotly_chart(fig_q1, use_container_width=True)
+        
+    with c2:
+        # Viz 2: Gender Preference
+        fig_q2 = px.histogram(df, x='Product_Category_1', color='Gender', barmode='group',
+                              title="Product Preference by Gender", 
+                              color_discrete_map={'Male': '#00E5FF', 'Female': '#FF3366'}, template='plotly_dark')
+        st.plotly_chart(fig_q2, use_container_width=True)
+        
+    with c3:
+        # Viz 3: Anomalies demographic
+        df['Behavior'] = np.where(df['Purchase'] > upper_bound, 'Anomaly', 'Normal')
+        anom_only = df[df['Behavior'] == 'Anomaly']
+        fig_q3 = px.pie(anom_only, names='Gender', title="Demographic of Anomaly Spenders",
+                        color_discrete_sequence=['#FFD700', '#FF3366'], template='plotly_dark')
+        st.plotly_chart(fig_q3, use_container_width=True)
+
+    st.markdown("## 🔑 Final Answers to Core Questions")
     
     st.markdown("""
     <div class="card">
         <h3 style="color: #00E5FF;">1. Which age group spends the most?</h3>
         <p style="font-size: 1.1rem;">
-        Based on our EDA boxplots, correlation heatmaps, and K-Means clustering, the <b>26-35</b> and <b>36-45 age groups</b> spend the most. They have the highest median purchases, the strongest positive correlation to total spend, and dominate the "Premium Buyers" cluster.
+        As confirmed by the first graph above, the <b>26-35</b> and <b>36-45 age groups</b> spend the most on average. They have the highest median purchases, the strongest positive correlation to total spend, and dominate the K-Means "Premium Buyers" cluster.
         </p>
     </div>
     """, unsafe_allow_html=True)
@@ -442,9 +467,9 @@ elif page == "7️⃣ Stage 7: Insights & Reporting":
     <div class="card">
         <h3 style="color: #FF3366;">2. Which products are popular with males vs. females?</h3>
         <p style="font-size: 1.1rem;">
-        Through categorical mapping and EDA, a clear divide is visible:
+        The second graph clearly displays this gender divide:
         <br><br>
-        • <b>Males</b> are driving massive volume in the <b>Electronics</b> and <b>Sports</b> product categories.<br>
+        • <b>Males</b> drive massive volume in the <b>Electronics</b> and <b>Sports</b> product categories.<br>
         • <b>Females</b> overwhelmingly popularize the <b>Apparel</b>, <b>Beauty</b>, and <b>Home</b> product categories.
         </p>
     </div>
@@ -454,33 +479,14 @@ elif page == "7️⃣ Stage 7: Insights & Reporting":
     <div class="card">
         <h3 style="color: #FFD700;">3. What type of buyers spend unusually high amounts?</h3>
         <p style="font-size: 1.1rem;">
-        Our IQR Anomaly Detection isolated the "Whale" buyers making extremely high purchases. When comparing these anomalies to demographics, we found that unusually high spenders are:
+        Our IQR Anomaly Detection isolated the buyers making extreme outlier purchases. As seen in the third graph, these unusual high spenders are:
         <br><br>
         • Predominantly <b>Male</b>.<br>
-        • Concentrated exclusively in the <b>26-45 age range</b>.<br>
+        • Concentrated almost exclusively in the <b>26-45 age range</b>.<br>
         • Working in specific, high-paying <b>Occupation codes</b> (e.g., codes 4 and 7).
         </p>
     </div>
     """, unsafe_allow_html=True)
-
-    st.markdown("---")
-    
-    st.markdown("## 📊 Summary Visuals for Retailers")
-    col1, col2 = st.columns(2)
-    with col1:
-        st.markdown("""
-        <div class="success-box">
-            <h4>🎯 Cluster Marketing Actions</h4>
-            <p>Leverage our <b>Stage 4 Clustering</b>: Send clearance and discount bundle emails exclusively to the <b>"Discount Lovers"</b> segment. Target the <b>"Premium Buyers"</b> segment with early access to high-ticket Electronics.</p>
-        </div>
-        """, unsafe_allow_html=True)
-    with col2:
-        st.markdown("""
-        <div class="success-box">
-            <h4>🔗 Combo Offer Design</h4>
-            <p>Based on our <b>Stage 5 Association Rules</b> (Apriori), when a user adds <i>Electronics</i> to their cart, the website should immediately suggest <i>Accessories</i> to exploit the high 'Lift' combination and increase total cart value.</p>
-        </div>
-        """, unsafe_allow_html=True)
 
 # ------------------------------
 # Footer
