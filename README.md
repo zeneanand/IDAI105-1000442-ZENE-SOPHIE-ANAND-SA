@@ -73,6 +73,51 @@ The project successfully answers the core business questions:
 
 ---
 
+# 🖥️ UI Dashboard Showcase
+
+A comprehensive visual walkthrough of the dashboard interface, features, and user flow.
+
+## 📸 Screenshots
+
+### Key Highlights
+<table style="width: 100%;">
+  <tr>
+    <td width="33%"><img src="./SCREENSHOTS/1.png" alt="Dashboard Overview"></td>
+    <td width="33%"><img src="./SCREENSHOTS/2.png" alt="Analytics View"></td>
+    <td width="33%"><img src="./SCREENSHOTS/3.png" alt="User Management"></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Main Overview</b></td>
+    <td align="center"><b>Data Analytics</b></td>
+    <td align="center"><b>User Profiles</b></td>
+  </tr>
+</table>
+
+---
+
+### Interface Gallery
+Below are the detailed views of the application modules, from navigation to settings.
+
+<details>
+<summary><b>Click to expand all 15 screenshots</b></summary>
+
+| | |
+|---|---|
+| ![Screen 4](./SCREENSHOTS/4.png) | ![Screen 5](./SCREENSHOTS/5.png) |
+| ![Screen 6](./SCREENSHOTS/6.png) | ![Screen 7](./SCREENSHOTS/7.png) |
+| ![Screen 8](./SCREENSHOTS/8.png) | ![Screen 9](./SCREENSHOTS/9.png) |
+| ![Screen 10](./SCREENSHOTS/10.png) | ![Screen 11](./SCREENSHOTS/11.png) |
+| ![Screen 12](./SCREENSHOTS/12.png) | ![Screen 13](./SCREENSHOTS/13.png) |
+| ![Screen 14](./SCREENSHOTS/14.png) | ![Screen 15](./SCREENSHOTS/15.png) |
+
+</details>
+
+---
+
+## 🛠️ Features Visualized
+* **Real-time Monitoring:** (Refer to Screenshots 1-3)
+* **System Configuration:** (Refer to Screenshots 10-12)
+* **Reporting Tools:** (Refer to Screenshots 13-15)
 ## 📂 **Repository Structure**
 
 ```text
