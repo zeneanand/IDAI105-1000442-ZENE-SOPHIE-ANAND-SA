@@ -75,20 +75,17 @@ The project successfully answers the core business questions:
 
 ## 🖥️ UI Dashboard
 
-This section showcases the visual interface of the application. The dashboard is designed for high performance and intuitive user navigation.
 
-| | | |
 |:---:|:---:|:---:|
 | ![Dashboard 1](./SCREENSHOTS/1.png) | ![Dashboard 2](./SCREENSHOTS/2.png) | ![Dashboard 3](./SCREENSHOTS/3.png) |
-| **Main Overview** | **User Analytics** | **Revenue Stats** |
+
 | ![Dashboard 4](./SCREENSHOTS/4.png) | ![Dashboard 5](./SCREENSHOTS/5.png) | ![Dashboard 6](./SCREENSHOTS/6.png) |
-| **Settings Page** | **Profile View** | **Data Table** |
+
 | ![Dashboard 7](./SCREENSHOTS/7.png) | ![Dashboard 8](./SCREENSHOTS/8.png) | ![Dashboard 9](./SCREENSHOTS/9.png) |
-| **Notifications** | **Modal View** | **Dark Mode** |
+
 | ![Dashboard 10](./SCREENSHOTS/10.png) | ![Dashboard 11](./SCREENSHOTS/11.png) | ![Dashboard 12](./SCREENSHOTS/12.png) |
-| **Calendar** | **Chat UI** | **Mobile View** |
+
 | ![Dashboard 13](./SCREENSHOTS/13.png) | ![Dashboard 14](./SCREENSHOTS/14.png) | |
-| **Error States** | **Success States** | |
 
 ---
 ```text
