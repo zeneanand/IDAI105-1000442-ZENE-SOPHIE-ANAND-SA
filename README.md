@@ -73,53 +73,24 @@ The project successfully answers the core business questions:
 
 ---
 
-# 🖥️ UI Dashboard Showcase
+## 🖥️ UI Dashboard
 
-A comprehensive visual walkthrough of the dashboard interface, features, and user flow.
+This section showcases the visual interface of the application. The dashboard is designed for high performance and intuitive user navigation.
 
-## 📸 Screenshots
-
-### Key Highlights
-<table style="width: 100%;">
-  <tr>
-    <td width="33%"><img src="./SCREENSHOTS/1.png" alt="Dashboard Overview"></td>
-    <td width="33%"><img src="./SCREENSHOTS/2.png" alt="Analytics View"></td>
-    <td width="33%"><img src="./SCREENSHOTS/3.png" alt="User Management"></td>
-  </tr>
-  <tr>
-    <td align="center"><b>Main Overview</b></td>
-    <td align="center"><b>Data Analytics</b></td>
-    <td align="center"><b>User Profiles</b></td>
-  </tr>
-</table>
+| | | |
+|:---:|:---:|:---:|
+| ![Dashboard 1](./SCREENSHOTS/1.png) | ![Dashboard 2](./SCREENSHOTS/2.png) | ![Dashboard 3](./SCREENSHOTS/3.png) |
+| **Main Overview** | **User Analytics** | **Revenue Stats** |
+| ![Dashboard 4](./SCREENSHOTS/4.png) | ![Dashboard 5](./SCREENSHOTS/5.png) | ![Dashboard 6](./SCREENSHOTS/6.png) |
+| **Settings Page** | **Profile View** | **Data Table** |
+| ![Dashboard 7](./SCREENSHOTS/7.png) | ![Dashboard 8](./SCREENSHOTS/8.png) | ![Dashboard 9](./SCREENSHOTS/9.png) |
+| **Notifications** | **Modal View** | **Dark Mode** |
+| ![Dashboard 10](./SCREENSHOTS/10.png) | ![Dashboard 11](./SCREENSHOTS/11.png) | ![Dashboard 12](./SCREENSHOTS/12.png) |
+| **Calendar** | **Chat UI** | **Mobile View** |
+| ![Dashboard 13](./SCREENSHOTS/13.png) | ![Dashboard 14](./SCREENSHOTS/14.png) | |
+| **Error States** | **Success States** | |
 
 ---
-
-### Interface Gallery
-Below are the detailed views of the application modules, from navigation to settings.
-
-<details>
-<summary><b>Click to expand all 15 screenshots</b></summary>
-
-| | |
-|---|---|
-| ![Screen 4](./SCREENSHOTS/4.png) | ![Screen 5](./SCREENSHOTS/5.png) |
-| ![Screen 6](./SCREENSHOTS/6.png) | ![Screen 7](./SCREENSHOTS/7.png) |
-| ![Screen 8](./SCREENSHOTS/8.png) | ![Screen 9](./SCREENSHOTS/9.png) |
-| ![Screen 10](./SCREENSHOTS/10.png) | ![Screen 11](./SCREENSHOTS/11.png) |
-| ![Screen 12](./SCREENSHOTS/12.png) | ![Screen 13](./SCREENSHOTS/13.png) |
-| ![Screen 14](./SCREENSHOTS/14.png) | ![Screen 15](./SCREENSHOTS/15.png) |
-
-</details>
-
----
-
-## 🛠️ Features Visualized
-* **Real-time Monitoring:** (Refer to Screenshots 1-3)
-* **System Configuration:** (Refer to Screenshots 10-12)
-* **Reporting Tools:** (Refer to Screenshots 13-15)
-## 📂 **Repository Structure**
-
 ```text
 IDAI105(1000442)-zene-sophie-anand/
 │
