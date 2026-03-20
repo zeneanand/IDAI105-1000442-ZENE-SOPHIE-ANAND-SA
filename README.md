@@ -75,15 +75,15 @@ The project successfully answers the core business questions:
 
 ## 🖥️ UI Dashboard
 
-| ![Dashboard 1](./SCREEN%20SHOT/1.png) | ![Dashboard 2](./SCREEN%20SHOT/2.png) | ![Dashboard 3](./SCREEN%20SHOT/3.png) |
+ ![Dashboard 1](./SCREEN%20SHOT/1.png)  ![Dashboard 2](./SCREEN%20SHOT/2.png)  ![Dashboard 3](./SCREEN%20SHOT/3.png) 
 
-| ![Dashboard 4](./SCREEN%20SHOT/4.png) | ![Dashboard 5](./SCREEN%20SHOT/5.png) | ![Dashboard 6](./SCREEN%20SHOT/6.png) |
+ ![Dashboard 4](./SCREEN%20SHOT/4.png)  ![Dashboard 5](./SCREEN%20SHOT/5.png)  ![Dashboard 6](./SCREEN%20SHOT/6.png) 
 
-| ![Dashboard 7](./SCREEN%20SHOT/7.png) | ![Dashboard 8](./SCREEN%20SHOT/8.png) | ![Dashboard 9](./SCREEN%20SHOT/9.png) |
+ ![Dashboard 7](./SCREEN%20SHOT/7.png)  ![Dashboard 8](./SCREEN%20SHOT/8.png)  ![Dashboard 9](./SCREEN%20SHOT/9.png) 
 
-| ![Dashboard 10](./SCREEN%20SHOT/10.png) | ![Dashboard 11](./SCREEN%20SHOT/11.png) | ![Dashboard 12](./SCREEN%20SHOT/12.png) |
+ ![Dashboard 10](./SCREEN%20SHOT/10.png)  ![Dashboard 11](./SCREEN%20SHOT/11.png)  ![Dashboard 12](./SCREEN%20SHOT/12.png) 
 
-| ![Dashboard 13](./SCREEN%20SHOT/13.png) | ![Dashboard 14](./SCREEN%20SHOT/14.png) | |
+ ![Dashboard 13](./SCREEN%20SHOT/13.png)  ![Dashboard 14](./SCREEN%20SHOT/14.png) 
 
 ---
 ```text
