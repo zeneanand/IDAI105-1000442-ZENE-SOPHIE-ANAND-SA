@@ -75,8 +75,6 @@ The project successfully answers the core business questions:
 
 ## 🖥️ UI Dashboard
 
-
-|:---:|:---:|:---:|
 | ![Dashboard 1](./SCREEN%20SHOT/1.png) | ![Dashboard 2](./SCREEN%20SHOT/2.png) | ![Dashboard 3](./SCREEN%20SHOT/3.png) |
 
 | ![Dashboard 4](./SCREEN%20SHOT/4.png) | ![Dashboard 5](./SCREEN%20SHOT/5.png) | ![Dashboard 6](./SCREEN%20SHOT/6.png) |
