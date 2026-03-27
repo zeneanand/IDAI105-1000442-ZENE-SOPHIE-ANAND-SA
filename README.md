@@ -16,6 +16,12 @@ An interactive Business Intelligence web application built with **Streamlit**. T
 * **Course Name:** Data Mining / IBCP (AI)
 * **Institution:** Aspen Nutan Academy
 
+
+## 📌 Brief Project Title and Scope
+**Project Title:** Beyond Discounts: Data-Driven Black Friday Sales Insights.
+
+**Project Scope:** As a Data Analyst at InsightMart Analytics, the objective of this project is to analyze historical Black Friday sales data to uncover hidden consumer trends. The scope includes cleaning raw transaction data, performing exploratory data analysis, segmenting customers using machine learning, and identifying highly profitable cross-selling opportunities. The ultimate goal is to provide actionable business intelligence to retail managers to optimize inventory and design targeted marketing campaigns.
+
 ---
 
 ## 🚀 **Live Dashboard**
@@ -30,6 +36,23 @@ The interactive data mining dashboard is deployed live on Streamlit Community Cl
 As a Data Analyst at InsightMart Analytics, the objective of this project is to understand shopping behavior during a Black Friday mega sale. 
 * **Goal:** Uncover hidden consumer trends, segment customers by purchasing habits, and identify highly profitable product combinations.
 * **Outcome:** Provide actionable business intelligence to retail managers to optimize inventory and design targeted combo offers.
+
+---
+## 🧹 Key Preprocessing Steps, Visualizations, and Findings
+
+### **Key Preprocessing Steps**
+Before analysis, the raw dataset underwent rigorous cleaning:
+1. **Duplicate Removal:** Scanned for and dropped duplicate or irrelevant transaction rows.
+2. **Handling Missing Values:** Filled null values in `Product_Category_2` and `Product_Category_3` with "None".
+3. **Categorical Encoding (Binary):** Converted the `Gender` column into numbers (Male = 0, Female = 1).
+4. **Categorical Encoding (Ordinal):** Converted `Age` groups into ordered numbers (0-17 → 1, 18-25 → 2, up to 7).
+5. **Normalization:** Applied `StandardScaler` to the `Purchase` amounts to ensure spending data was on the same scale as demographic data for clustering.
+
+### **Visualizations & Findings**
+* **Box Plots:** A box plot of Purchase by Age and Gender revealed that the 26-35 and 36-45 age groups consistently display the highest median purchase amounts.
+* **Bar Charts:** Visualizing category popularity showed that 'Electronics' and 'Apparel' drive the most volume, while the 'Home' category drives the highest average revenue per transaction.
+* **Scatter Plots:** A scatter plot mapping Purchase vs. Occupation revealed dense clusters of high-spending buyers in specific occupation codes (e.g., Codes 4 and 7).
+* **Correlation Heatmap:** Proved a mathematical positive correlation (0.24) between age and spending power.
 
 ---
 
@@ -86,16 +109,18 @@ The project successfully answers the core business questions:
  ![Dashboard 13](./SCREEN%20SHOT/13.png)  ![Dashboard 14](./SCREEN%20SHOT/14.png) 
 
 ---
+## 📂 6. Repository Structure Guide
+
 ```text
-IDAI105(1000442)-zene-sophie-anand/
+IDAI105-1000442-ZENE-SOPHIE-ANAND/
 │
-├── app.py                 # Main Streamlit dashboard and ML pipeline
-├── requirements.txt       # Python library dependencies 
-├── SCREEN SHOT/           # Folder containing UI documentation images
+├── app.py                 # Main Streamlit dashboard application and Machine Learning pipeline
+├── requirements.txt       # Python library dependencies needed to run the app
+├── SCREEN SHOT/           # Folder containing UI documentation images for the README
 │   ├── #1.png
+│   ├── #2.png
 │   └── ...
-└── README.md              # Project documentation and rubric evidence
-```
+└── README.md              # Detailed project documentation and insights (This file)
 
 ---
 
