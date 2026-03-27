@@ -144,3 +144,12 @@ To run this project on your local machine:
    streamlit run app.py
    ```
 ```
+
+📚 7. References
+Scikit-Learn Documentation: K-Means Clustering and Preprocessing. (https://scikit-learn.org/)
+
+Mlxtend Documentation: Apriori Algorithm and Market Basket Analysis. (http://rasbt.github.io/mlxtend/)
+
+Plotly Express: Interactive Python Graphing Library. (https://plotly.com/python/plotly-express/)
+
+Streamlit: Open-source app framework for Machine Learning and Data Science. (https://streamlit.io/)
